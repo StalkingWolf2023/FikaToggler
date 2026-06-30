@@ -30,7 +30,7 @@
 
 ## 怎么用
 
-1. 去 [Releases](../../releases) 下最新的 `FikaToggler.ps1` 和 `FikaToggler.bat`,**两个文件请放一起,不限制目录**。
+1. 去 [Releases](../../releases) 下最新的 `FikaToggler.ps1` 和 `FikaToggler.bat`,**两个文件请放一起,不限制目录**(强烈建议存放在独立文件夹中,以避免管理混乱——本工具运行时会生成快照、日志等多个文件和文件夹)。
 2. 双击 `.bat` 运行以调用 PS 脚本。第一次启动可能闪一下黑窗口,正常的。
 3. 点「浏览」,选你塔科夫游戏所在的根目录,游戏文件夹本身或者它的上一层都行(这是 AI 说的,我建议你直接选游戏根目录文件夹)。
 4. 工具会自动扫一遍,扫完了选模式、点应用就行。
@@ -97,7 +97,7 @@ Get-FileHash .\FikaToggler.bat -Algorithm SHA256
 
 Built this because I use Fika to host games with a friend — when they log off and I want to keep playing solo, I'd have to go through the whole host setup again just for single-player. Annoying enough that I wrote (well, mostly AI wrote it, I just specified what I wanted) a tool with three buttons: **Single Player**, **Multiplayer Host**, **Multiplayer Guest**. It only switches an *already installed* Fika setup on/off and fixes up the connection addresses — it won't install Fika for you.
 
-**Get it:** grab `FikaToggler.ps1` and `FikaToggler.bat` from [Releases](../../releases), keep them in the same folder (location doesn't matter), double-click the `.bat`. A brief console flash on first run is normal. Browse to your Tarkov root, let it scan, pick a mode, apply.
+**Get it:** grab `FikaToggler.ps1` and `FikaToggler.bat` from [Releases](../../releases), keep them in the same folder — preferably a dedicated empty one, since the tool generates snapshots/logs/config files as it runs. Double-click the `.bat`. A brief console flash on first run is normal. Browse to your Tarkov root, let it scan, pick a mode, apply.
 
 **What it does under the hood:** toggles Fika by moving `BepInEx\plugins\Fika` and `user\mods\fika-server` in and out of a backup folder (nothing's deleted), rewrites `http.json` / `launcher\config.json` via JSON parsing (not regex, won't corrupt the file), snapshots your config before every switch (last 10 kept; restore brings back the connection settings only — Fika's on/off state is left alone on purpose), and checks that `SPT.Server` / `SPT.Launcher` / `EscapeFromTarkov` aren't running before touching anything.
 

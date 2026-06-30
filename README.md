@@ -1,3 +1,7 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Release](https://img.shields.io/github/v/release/StalkingWolf2023/FikaToggler)](../../releases)
+[![Stars](https://img.shields.io/github/stars/StalkingWolf2023/FikaToggler?style=social)](../../stargazers)
+
 # FikaToggler
 
 本项目单纯是因为我用 Fika 跟朋友联机当主机,朋友下线之后我还想继续单刷,结果每次开局都得走一遍主持战局的流程,有点蛋疼。
@@ -74,6 +78,13 @@ Get-FileHash .\FikaToggler.bat -Algorithm SHA256
 
 **能帮我装 Fika 吗?**
 不能,这工具只在"已经装好"的 Fika 之间切换。装 Fika 请去 [Fika Wiki](https://wiki.project-fika.com)。
+
+## 相关项目
+
+- [SPT (Single Player Tarkov)](https://sp-tarkov.com) —— 这工具运行的基础,塔科夫单机/私服框架
+- [Fika Plugin](https://github.com/project-fika/Fika-Plugin) —— 给 SPT 加上联机能力的客户端插件,本工具切换的就是它
+- [Fika Server (C# 版)](https://github.com/project-fika/Fika-Server-CSharp) —— Fika 现在的服务端,SPT 4.0 之后官方重写成了 C#,旧的 TypeScript 版仓库已经归档
+- [Fika Wiki](https://wiki.project-fika.com) —— Fika 安装、配置、踩坑都先去这看
 
 ## 协议
 

@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 try {
     Add-Type -AssemblyName System.Windows.Forms
     Add-Type -AssemblyName System.Drawing
@@ -18,6 +18,7 @@ try {
         FikaServer = ": Release 2.3.2"
     }
     $MaxSnapshots = 10
+    $ToolVersion = "v1.0.1"
     # ===================================================
 
     $script:ServerRoot = $null
@@ -68,7 +69,7 @@ try {
             msgbox_restore_body         = "将恢复到快照：{0}`n仅恢复 http.json 与 launcher 配置，不会移动 Fika 插件文件。`n是否继续？"
             msgbox_fatal_title          = "FikaToggler 错误"
             msgbox_fatal_prefix         = "脚本运行出错："
-            log_tool_started            = "FikaToggler 启动。"
+            log_tool_started            = "FikaToggler {0} 启动。"
             log_first_use               = "首次使用，请点击「浏览」选择塔科夫/SPT 所在目录。"
             log_scanning                = "正在扫描：{0}"
             log_server_not_found        = "未找到 SPT 服务端（SPT.Server.exe）。"
@@ -106,7 +107,7 @@ try {
             log_apply_error             = "切换过程中发生错误：{0}"
             log_apply_error_hint        = "可点击「恢复上次快照」尝试回退配置文件（不含 Fika 文件移动状态）。"
             log_http_updated            = "已更新 http.json -> backendIp = {0}"
-            log_launcher_updated        = "已更新 launcher/config.json -> Server.Url = {0}"
+            log_launcher_updated        = "已更新 launcher/config.json -> Server.Url = {0}, IsDevMode = {1}"
             log_no_server_root_launch   = "未检测到服务端目录，无法启动。"
             log_server_exe_missing      = "找不到 SPT.Server.exe，请检查服务端目录。"
             log_launcher_exe_missing    = "找不到 SPT.Launcher.exe，请检查服务端目录。"
@@ -162,7 +163,7 @@ try {
             msgbox_restore_body         = "This will restore snapshot: {0}`nOnly http.json and launcher config will be restored; Fika plugin files will NOT be moved.`nContinue?"
             msgbox_fatal_title          = "FikaToggler Error"
             msgbox_fatal_prefix         = "Script error occurred:"
-            log_tool_started            = "FikaToggler started."
+            log_tool_started            = "FikaToggler {0} started."
             log_first_use               = "First time use: click `"Browse`" to select your Tarkov/SPT folder."
             log_scanning                = "Scanning: {0}"
             log_server_not_found        = "SPT server (SPT.Server.exe) not found."
@@ -200,7 +201,7 @@ try {
             log_apply_error             = "An error occurred while switching: {0}"
             log_apply_error_hint        = "You can click `"Restore Last Snapshot`" to roll back config files (this does not include Fika file move state)."
             log_http_updated            = "Updated http.json -> backendIp = {0}"
-            log_launcher_updated        = "Updated launcher/config.json -> Server.Url = {0}"
+            log_launcher_updated        = "Updated launcher/config.json -> Server.Url = {0}, IsDevMode = {1}"
             log_no_server_root_launch   = "Server root not detected; cannot launch."
             log_server_exe_missing      = "SPT.Server.exe not found. Please check the server folder."
             log_launcher_exe_missing    = "SPT.Launcher.exe not found. Please check the server folder."
@@ -423,12 +424,12 @@ try {
         if (Test-Path $launcherSrc) { Copy-Item $launcherSrc $launcherDst -Force }
 
         Log (Tr 'log_snapshot_restored' @($latest.Name))
-        Do-Scan $script:BaseFolder
+        Do-Scan $script:BaseFolder $false
     }
 
     # ---------- 扫描逻辑 ----------
-    function Do-Scan($base) {
-        $txtLog.Clear()
+    function Do-Scan($base, [bool]$ClearLog = $true) {
+        if ($ClearLog) { $txtLog.Clear() }
         Log (Tr 'log_scanning' @($base))
         $script:ServerRoot = Find-ServerRoot $base
         if (-not $script:ServerRoot) {
@@ -536,7 +537,7 @@ try {
                         Move-Item $serverActive $serverBackup -Force
                         Log (Tr 'log_fika_disabled')
                     } else { Log (Tr 'log_fika_already_disabled') }
-                    Set-Addresses -HttpIp "127.0.0.1" -LauncherUrl "https://127.0.0.1:6969"
+                    Set-Addresses -HttpIp "127.0.0.1" -LauncherUrl "https://127.0.0.1:6969" -DevMode $false
                     Log (Tr 'log_apply_single_done')
                 }
                 "host" {
@@ -547,7 +548,7 @@ try {
                         Move-Item $serverBackup $serverActive -Force
                         Log (Tr 'log_fika_enabled')
                     } else { Log (Tr 'log_fika_already_enabled') }
-                    Set-Addresses -HttpIp $ip -LauncherUrl "https://${ip}:6969"
+                    Set-Addresses -HttpIp $ip -LauncherUrl "https://${ip}:6969" -DevMode $true
                     Log (Tr 'log_apply_host_done')
                 }
                 "guest" {
@@ -558,7 +559,7 @@ try {
                         Move-Item $serverBackup $serverActive -Force
                         Log (Tr 'log_fika_auto_enabled')
                     } else { Log (Tr 'log_fika_no_action') }
-                    Set-Addresses -HttpIp $null -LauncherUrl "https://${ip}:6969" -SkipHttp
+                    Set-Addresses -HttpIp $null -LauncherUrl "https://${ip}:6969" -SkipHttp -DevMode $true
                     Log (Tr 'log_apply_guest_done')
                 }
             }
@@ -567,11 +568,11 @@ try {
             Log (Tr 'log_apply_error_hint')
         }
 
-        Do-Scan $script:BaseFolder
+        Do-Scan $script:BaseFolder $false
     }
 
     function Set-Addresses {
-        param([string]$HttpIp, [string]$LauncherUrl, [switch]$SkipHttp)
+        param([string]$HttpIp, [string]$LauncherUrl, [switch]$SkipHttp, [bool]$DevMode = $false)
         if (-not $SkipHttp -and $HttpIp) {
             $httpJson = Join-Path $script:ServerRoot "SPT_Data\Configs\http.json"
             if (Test-Path $httpJson) {
@@ -585,8 +586,9 @@ try {
         if (Test-Path $launcherCfg) {
             $l = Get-Content $launcherCfg -Raw | ConvertFrom-Json
             $l.Server.Url = $LauncherUrl
+            $l.IsDevMode = $DevMode
             $l | ConvertTo-Json -Depth 10 | Set-Content $launcherCfg
-            Log (Tr 'log_launcher_updated' @($LauncherUrl))
+            Log (Tr 'log_launcher_updated' @($LauncherUrl, $DevMode))
         }
     }
 
@@ -642,7 +644,7 @@ try {
     }
 
     function Apply-StaticUI {
-        $form.Text = Tr 'form_title'
+        $form.Text = "$(Tr 'form_title') $ToolVersion"
         if (-not $script:BaseFolder) { $lblFolder.Text = Tr 'label_no_folder' }
         $btnBrowse.Text = Tr 'btn_browse'
         $btnLang.Text = if ($script:CurrentLang -eq 'zh') { Tr 'btn_lang_to_en' } else { Tr 'btn_lang_to_zh' }
@@ -817,13 +819,13 @@ try {
     # ---------- 启动初始化 ----------
     Apply-StaticUI
     Initialize-LogFile
-    Log (Tr 'log_tool_started')
+    Log (Tr 'log_tool_started' @($ToolVersion))
 
     $cfg = Load-Config
     if ($cfg -and $cfg.BaseFolder -and (Test-Path $cfg.BaseFolder)) {
         $script:BaseFolder = $cfg.BaseFolder
         $lblFolder.Text = $script:BaseFolder
-        Do-Scan $script:BaseFolder
+        Do-Scan $script:BaseFolder $false
     } else {
         Log (Tr 'log_first_use')
         $btnRestore.Enabled = (Test-Path $SnapshotDir)

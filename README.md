@@ -41,8 +41,9 @@
 2. 双击 `.bat` 运行以调用 PS 脚本。第一次启动可能闪一下黑窗口,正常的。
 3. 点「浏览」,选你塔科夫游戏所在的根目录,游戏文件夹本身或者它的上一层都行(这是 AI 说的,我建议你直接选游戏根目录文件夹)。
 4. 工具会自动扫一遍,扫完了选模式、点应用就行。
+5. 应用后支持一键启动服务端+登录器，在单人和主机模式下会先启动服务端，监听6969端口等待服务器就绪后启动登录器，客机模式下则会跳过服务端直接启动登陆器。
 
-<img src="https://github.com/user-attachments/assets/2fc9a433-8e1e-4d84-8f33-ff768ccbfb95" width="480" alt="FikaToggler 操作演示">
+<img src="https://github.com/user-attachments/assets/495b6fe2-69e1-4bc2-a0ea-0784d8e5407f" width="480" alt="FikaToggler 操作演示">
 
 ## 我的测试环境
 

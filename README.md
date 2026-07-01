@@ -4,7 +4,7 @@
 
 # FikaToggler
 
-<img width="646" height="728" alt="ScreenShot_2026-07-01_073611_879" src="https://github.com/user-attachments/assets/a225c444-1d53-4f88-87a6-129e3d8a09df" />
+ <img src="https://github.com/user-attachments/assets/a225c444-1d53-4f88-87a6-129e3d8a09df" width="480" alt="FikaToggler 主界面">
 
 本项目单纯是因为我用 Fika 跟朋友联机当主机,朋友下线之后我还想继续单刷,结果每次开局都得走一遍主持战局的流程,有点蛋疼。
 所以写了这么个东西(大部分是 AI 写的),自动处理单人模式、Fika 主机模式、Fika 客机模式之间的切换。
@@ -42,7 +42,7 @@
 3. 点「浏览」,选你塔科夫游戏所在的根目录,游戏文件夹本身或者它的上一层都行(这是 AI 说的,我建议你直接选游戏根目录文件夹)。
 4. 工具会自动扫一遍,扫完了选模式、点应用就行。
 
-<img width="720" height="777" alt="动画" src="https://github.com/user-attachments/assets/5d370ca1-d71d-4137-9b65-48772437fe10" />
+<img src="https://github.com/user-attachments/assets/2fc9a433-8e1e-4d84-8f33-ff768ccbfb95" width="480" alt="FikaToggler 操作演示">
 
 ## 我的测试环境
 
